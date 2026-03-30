@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel PBL — Projetos EF II</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.06);
+    --text: #1a1917;
+    --text2: #6b6a65;
+    --text3: #9e9d98;
+    --today: rgba(55,138,221,0.15);
+    --today-border: #378ADD;
+    --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 1px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    width: 36px; height: 36px;
+    background: #1a1917;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  header h1 { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; }
+  header p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+  .badge {
+    margin-left: auto;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text2);
+    font-family: 'DM Mono', monospace;
+  }
+  .main { padding: 1.5rem 2rem 3rem; max-width: 1400px; margin: 0 auto; }
+  .controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1.25rem;
+    align-items: flex-start;
+  }
+  .control-group { display: flex; flex-direction: column; gap: 6px; }
+  .control-label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 5px; }
+  .filter-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 4px 11px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-weight: 500;
+  }
+  .filter-btn:hover { border-color: rgba(0,0,0,0.2); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+  .legend-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+  }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .gantt-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: auto;
+    box-shadow: var(--shadow);
+  }
+  table.gantt {
+    border-collapse: collapse;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .gantt th {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 10px;
+    color: var(--text3);
+    text-align: center;
+    padding: 5px 2px;
+    border-bottom: 1px solid var(--border2);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 20;
+  }
+  .gantt th.label-th {
+    text-align: left;
+    padding: 5px 12px 5px 8px;
+    min-width: 140px;
+    position: sticky;
+    left: 0;
+    z-index: 30;
+    border-right: 1px solid var(--border2);
+  }
+  .gantt td {
+    padding: 1px;
+    height: 26px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .gantt td.label-td {
+    position: sticky;
+    left: 0;
+    background: var(--surface);
+    z-index: 10;
+    padding: 3px 10px 3px 8px;
+    border-right: 1px solid var(--border2);
+    min-width: 140px;
+  }
+  .proj-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .turma-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    margin-left: 4px;
+  }
+  .day-cell { width: 16px; min-width: 16px; max-width: 16px; padding: 4px 1px; vertical-align: middle; }
+  .bar {
+    width: 14px; height: 18px;
+    border-radius: 3px;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.1s, transform 0.1s;
+  }
+  .bar:hover { opacity: 0.8; transform: scaleY(1.15); }
+  .wkend { background: var(--surface2); }
+  .today-cell { background: var(--today); }
+  .bloco-sep td {
+    background: var(--surface2);
+    padding: 5px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    left: 0;
+  }
+  .week-sep { border-left: 1px solid var(--border2) !important; }
+  .today-th { color: var(--today-border) !important; font-weight: 600 !important; }
+  .pending-bar {
+    width: 14px; height: 18px;
+    border-radius: 3px;
+    background: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    border: 1px dashed rgba(0,0,0,0.12);
+  }
+  #tooltip {
+    position: fixed;
+    background: var(--text);
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px 11px;
+    font-size: 12px;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+    line-height: 1.7;
+    max-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  #tooltip b { font-weight: 600; }
+  #tooltip small { color: rgba(255,255,255,0.65); font-size: 11px; }
+  .stats {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    min-width: 110px;
+  }
+  .stat-num { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+  .stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .empty-msg { padding: 3rem; text-align: center; color: var(--text3); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📋</div>
+  <div>
+    <h1>Painel de Projetos PBL</h1>
+    <p>Ensino Fundamental II — Cronograma de Aulas</p>
+  </div>
+  <div class="badge" id="today-badge">—</div>
+</header>
+
+<div class="main">
+  <div class="controls-row">
+    <div class="control-group">
+      <div class="control-label">Turma</div>
+      <div class="btn-row" id="turma-filters"></div>
+    </div>
+    <div class="control-group">
+      <div class="control-label">Bloco</div>
+      <div class="btn-row" id="bloco-filters"></div>
+    </div>
+    <div class="control-group">
+      <div class="control-label">Disciplina</div>
+      <div class="btn-row" id="disc-filters"></div>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="legend-row" id="legend"></div>
+
+  <div class="gantt-container">
+    <table class="gantt" id="gantt"></table>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+
+<script>
+const DISC_COLORS = {
+  'Geometria':  '#2563EB',
+  'Ciências':   '#059669',
+  'Arte':       '#DB2777',
+  'Português':  '#D97706',
+  'Matemática': '#7C3AED',
+  'Geografia':  '#16A34A',
+  'História':   '#EA580C',
+};
+
+const PROJECTS = [
+  {bloco:'Bloco 1',turma:'600',disc:'Ciências',  dates:['25/02','26/02','04/03','05/03','11/03','12/03','18/03','19/03']},
+  {bloco:'Bloco 1',turma:'600',disc:'Geometria', dates:['27/02','06/03','13/03','20/03','27/03','10/04','17/04']},
+  {bloco:'Bloco 1',turma:'601',disc:'Ciências',  dates:['25/02','27/02','04/03','05/03','06/03','11/03','13/03','18/03']},
+  {bloco:'Bloco 1',turma:'601',disc:'Geometria', dates:['27/02','06/03','13/03','20/03','27/03','10/04','17/04']},
+  {bloco:'Bloco 1',turma:'700',disc:'Arte',       dates:['26/02','06/03','13/03','20/03','27/03']},
+  {bloco:'Bloco 1',turma:'700',disc:'Geometria', dates:['26/02','05/03','12/03','19/03','26/03','02/04','09/04','16/04']},
+  {bloco:'Bloco 1',turma:'701',disc:'Arte',       dates:['26/02','06/03','13/03','20/03','27/03']},
+  {bloco:'Bloco 1',turma:'701',disc:'Geometria', dates:['26/02','05/03','12/03','19/03','26/03','02/04','09/04','16/04']},
+  {bloco:'Bloco 1',turma:'800',disc:'Ciências',  dates:['02/03','03/03','09/03','10/03','16/03','17/03','23/03','24/03','30/03','31/03']},
+  {bloco:'Bloco 1',turma:'800',disc:'Geometria', dates:['02/03','09/03','16/03','23/03','30/03','06/04','13/04','27/04','04/05']},
+  {bloco:'Bloco 1',turma:'801',disc:'Ciências',  dates:['04/03','06/03','11/03','13/03','18/03','20/03','25/03','27/03','01/04','08/04']},
+  {bloco:'Bloco 1',turma:'801',disc:'Geometria', dates:['05/03','12/03','19/03','26/03','02/04','09/04','16/04','30/04','07/05']},
+  {bloco:'Bloco 1',turma:'900',disc:'Matemática',dates:['05/03','09/03','10/03','13/03','16/03','17/03','19/03','23/03','24/03','26/03','30/03']},
+  {bloco:'Bloco 1',turma:'900',disc:'Português', dates:['04/03','05/03','06/03','11/03','12/03','13/03','18/03','19/03','20/03','25/03']},
+  {bloco:'Bloco 1',turma:'901',disc:'Matemática',dates:['02/03','03/03','09/03','10/03','16/03','17/03','23/03','24/03','30/03']},
+  {bloco:'Bloco 1',turma:'901',disc:'Português', dates:['04/03','05/03','06/03','11/03','12/03','13/03','18/03','19/03','20/03','25/03']},
+  {bloco:'Bloco 2',turma:'600',disc:'Arte',       dates:['13/03','20/03','27/03','10/04','17/04','08/05','15/05']},
+  {bloco:'Bloco 2',turma:'600',disc:'Geografia', dates:['26/03','27/03','02/04','09/04','10/04','16/04','17/04','30/04']},
+  {bloco:'Bloco 2',turma:'601',disc:'Arte',       dates:['12/03','19/03','26/03','02/04','09/04','16/04','30/04']},
+  {bloco:'Bloco 2',turma:'601',disc:'Geografia', dates:['23/03','24/03','30/03','31/03','06/04','07/04','13/04','14/04','27/04']},
+  {bloco:'Bloco 2',turma:'700',disc:'Geografia', dates:['23/03','24/03','30/03','31/03','06/04','07/04','13/04','14/04','27/04','28/04']},
+  {bloco:'Bloco 2',turma:'700',disc:'História',  dates:['23/03','26/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04','04/05','07/05']},
+  {bloco:'Bloco 2',turma:'700',disc:'Português', dates:['16/03','23/03','30/03','06/04','13/04']},
+  {bloco:'Bloco 2',turma:'701',disc:'Geografia', dates:['23/03','26/03','30/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04']},
+  {bloco:'Bloco 2',turma:'701',disc:'História',  dates:['23/03','26/03','30/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04','04/05']},
+  {bloco:'Bloco 2',turma:'701',disc:'Português', dates:['18/03','25/03','01/04','08/04','15/04']},
+  {bloco:'Bloco 2',turma:'800',disc:'Geografia', dates:['18/03','19/03','25/03','26/03','01/04','02/04','08/04','09/04','15/04']},
+  {bloco:'Bloco 2',turma:'800',disc:'História',  dates:['17/03','18/03','24/03','25/03','30/03','31/03','07/04','08/04','15/04','28/04']},
+  {bloco:'Bloco 2',turma:'800',disc:'Português', dates:['16/03','17/03','23/03','24/03','30/03','31/03','06/04']},
+  {bloco:'Bloco 2',turma:'801',disc:'Geografia', dates:['17/03','18/03','24/03','25/03','31/03','01/04','06/04','07/04','14/04']},
+  {bloco:'Bloco 2',turma:'801',disc:'História',  dates:['17/03','18/03','24/03','25/03','30/03','31/03','07/04','08/04','15/04','28/04']},
+  {bloco:'Bloco 2',turma:'801',disc:'Português', dates:['13/03','16/03','20/03','23/03','27/03','30/03','06/04']},
+  {bloco:'Bloco 2',turma:'900',disc:'Geografia', dates:['18/03','19/03','24/03','25/03','31/03','01/04','07/04','08/04','14/04']},
+  {bloco:'Bloco 2',turma:'900',disc:'História',  dates:['16/03','17/03','23/03','24/03','30/03','31/03','06/04','07/04','13/04']},
+  {bloco:'Bloco 2',turma:'901',disc:'Geografia', dates:['17/03','19/03','24/03','26/03','31/03','02/04','07/04','09/04','14/04']},
+  {bloco:'Bloco 2',turma:'901',disc:'História',  dates:['17/03','18/03','24/03','25/03','31/03','01/04','07/04','08/04','14/04']},
+  {bloco:'Bloco 3',turma:'600',disc:'História',  dates:['13/04','16/04','27/04','04/05','07/05','11/05']},
+  {bloco:'Bloco 3',turma:'600',disc:'Português', dates:['06/04','07/04','13/04','14/04','27/04','28/04','04/05']},
+  {bloco:'Bloco 3',turma:'601',disc:'História',  dates:['06/04','10/04','13/04','16/04','27/04','11/05','14/05']},
+  {bloco:'Bloco 3',turma:'601',disc:'Português', dates:['06/04','07/04','13/04','14/04','27/04','28/04','04/05']},
+  {bloco:'Bloco 3',turma:'700',disc:'(pendente)',dates:[],pending:true},
+  {bloco:'Bloco 3',turma:'701',disc:'(pendente)',dates:[],pending:true},
+  {bloco:'Bloco 3',turma:'800',disc:'Arte',       dates:['26/03','02/04','09/04','16/04','30/04','07/05']},
+  {bloco:'Bloco 3',turma:'801',disc:'Arte',       dates:['26/03','02/04','09/04','16/04','30/04','07/05']},
+  {bloco:'Bloco 3',turma:'900',disc:'Arte',       dates:['24/03','31/03','07/04','14/04','28/04','05/05','12/05']},
+  {bloco:'Bloco 3',turma:'900',disc:'Ciências',  dates:['01/04','06/04','08/04','13/04','15/04','27/04','29/04','04/05']},
+  {bloco:'Bloco 3',turma:'901',disc:'Arte',       dates:['26/03','02/04','09/04','16/04','30/04','07/05','14/05']},
+  {bloco:'Bloco 3',turma:'901',disc:'Ciências',  dates:['01/04','06/04','08/04','13/04','15/04','27/04','29/04','04/05']},
+];
+
+function parseDate(s) {
+  const [d,m] = s.split('/').map(Number);
+  return new Date(2026, m-1, d);
+}
+function fmt(d) {
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');
+}
+function addDays(d,n) { const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+
+const today = new Date();
+const todayStr = fmt(today);
+document.getElementById('today-badge').textContent = 'Hoje: ' + todayStr + '/2026';
+
+const START = new Date(2026,1,24);
+const END   = new Date(2026,4,18);
+const days  = [];
+for (let d=new Date(START); d<=END; d=addDays(d,1)) days.push(new Date(d));
+
+const allTurmas = [...new Set(PROJECTS.map(p=>p.turma))].sort();
+const allBlocos = ['Bloco 1','Bloco 2','Bloco 3'];
+const allDiscs  = Object.keys(DISC_COLORS);
+
+let activeTurmas = new Set(allTurmas);
+let activeBlocos = new Set(allBlocos);
+let activeDiscs  = new Set(allDiscs);
+
+function buildControls() {
+  const tf = document.getElementById('turma-filters');
+  allTurmas.forEach(t => {
+    const b = document.createElement('button');
+    b.className='filter-btn active'; b.textContent=t;
+    b.onclick=()=>{ b.classList.toggle('active'); activeTurmas[b.classList.contains('active')?'add':'delete'](t); render(); };
+    tf.appendChild(b);
+  });
+  const bf = document.getElementById('bloco-filters');
+  allBlocos.forEach(b0 => {
+    const b = document.createElement('button');
+    b.className='filter-btn active'; b.textContent=b0;
+    b.onclick=()=>{ b.classList.toggle('active'); activeBlocos[b.classList.contains('active')?'add':'delete'](b0); render(); };
+    bf.appendChild(b);
+  });
+  const df = document.getElementById('disc-filters');
+  allDiscs.forEach(d0 => {
+    const b = document.createElement('button');
+    b.className='filter-btn active'; b.textContent=d0;
+    b.style.borderLeft=`3px solid ${DISC_COLORS[d0]}`;
+    b.onclick=()=>{ b.classList.toggle('active'); activeDiscs[b.classList.contains('active')?'add':'delete'](d0); render(); };
+    df.appendChild(b);
+  });
+  const leg = document.getElementById('legend');
+  Object.entries(DISC_COLORS).forEach(([name,color]) => {
+    leg.innerHTML += `<div class="leg-item"><span class="leg-dot" style="background:${color}"></span>${name}</div>`;
+  });
+  leg.innerHTML += `<div class="leg-item"><span class="leg-dot" style="background:repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);border:1px dashed rgba(0,0,0,0.2)"></span>Pendente</div>`;
+}
+
+const tip = document.getElementById('tooltip');
+document.addEventListener('mousemove', e => {
+  if(tip.style.display==='block') { tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY-10)+'px'; }
+});
+
+function render() {
+  const filtered = PROJECTS.filter(p =>
+    activeTurmas.has(p.turma) &&
+    activeBlocos.has(p.bloco) &&
+    (p.pending || activeDiscs.has(p.disc))
+  );
+
+  const statsEl = document.getElementById('stats');
+  const total = filtered.filter(p=>!p.pending).length;
+  const pending = filtered.filter(p=>p.pending).length;
+  const turmasAtivas = new Set(filtered.map(p=>p.turma)).size;
+  const totalAulas = filtered.filter(p=>!p.pending).reduce((a,p)=>a+p.dates.length,0);
+  statsEl.innerHTML = `
+    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Projetos ativos</div></div>
+    <div class="stat-card"><div class="stat-num">${turmasAtivas}</div><div class="stat-label">Turmas</div></div>
+    <div class="stat-card"><div class="stat-num">${totalAulas}</div><div class="stat-label">Aulas agendadas</div></div>
+    ${pending ? `<div class="stat-card"><div class="stat-num" style="color:#D97706">${pending}</div><div class="stat-label">Pendentes</div></div>` : ''}
+  `;
+
+  const tbl = document.getElementById('gantt');
+  if (!filtered.length) {
+    tbl.innerHTML = '<tr><td class="empty-msg" colspan="200">Nenhum projeto selecionado.</td></tr>';
+    return;
+  }
+
+  let html = '<thead>';
+  html += '<tr>';
+  html += `<th class="label-th">Projeto</th>`;
+
+  let wi = 0;
+  while (wi < days.length) {
+    let span = 1;
+    while (wi+span < days.length && days[wi+span].getDay() !== 1) span++;
+    const cls = days[wi].getTime()===today.getTime() ? ' today-th' : '';
+    html += `<th colspan="${span}" class="week-sep${cls}" style="min-width:${span*16}px">${fmt(days[wi])}</th>`;
+    wi += span;
+  }
+  html += '</tr></thead><tbody>';
+
+  allBlocos.forEach(bloco => {
+    if (!activeBlocos.has(bloco)) return;
+    const rows = filtered.filter(p=>p.bloco===bloco);
+    if (!rows.length) return;
+
+    html += `<tr class="bloco-sep"><td colspan="${days.length+1}">${bloco}</td></tr>`;
+
+    rows.forEach(proj => {
+      const projDates = new Set(proj.dates.map(d=>parseDate(d).getTime()));
+      const color = DISC_COLORS[proj.disc] || '#aaa';
+      html += '<tr>';
+      html += `<td class="label-td"><span class="proj-name">${proj.disc}</span><span class="turma-tag">${proj.turma}</span></td>`;
+      days.forEach(d => {
+        const dow = d.getDay();
+        const isToday = d.getTime()===today.getTime();
+        const isMon = dow===1;
+        const isWkend = dow===0||dow===6;
+        let cls = 'day-cell';
+        if (isWkend) cls += ' wkend';
+        if (isToday) cls += ' today-cell';
+        if (isMon) cls += ' week-sep';
+
+        let inner = '';
+        if (proj.pending && !isWkend) {
+          inner = `<div class="pending-bar" title="Pendente — ${proj.turma}"></div>`;
+        } else if (projDates.has(d.getTime())) {
+          const dateStr = fmt(d);
+          inner = `<div class="bar" style="background:${color}" data-tip="${proj.disc} · Turma ${proj.turma}|${bloco} · ${dateStr}"></div>`;
+        }
+        html += `<td class="${cls}">${inner}</td>`;
+      });
+      html += '</tr>';
+    });
+  });
+
+  html += '</tbody>';
+  tbl.innerHTML = html;
+
+  tbl.querySelectorAll('[data-tip]').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      const [line1,line2] = el.dataset.tip.split('|');
+      tip.innerHTML = `<b>${line1}</b><br><small>${line2}</small>`;
+      tip.style.display='block';
+    });
+    el.addEventListener('mouseleave', () => tip.style.display='none');
+  });
+}
+
+buildControls();
+render();
+</script>
+</body>
+</html>

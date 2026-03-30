@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel PBL — Projetos EF II</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;
+    --border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.06);
+    --text:#1a1917;--text2:#6b6a65;--text3:#9e9d98;
+    --radius:8px;--shadow:0 1px 3px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+  header{background:var(--surface);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+  .logo{width:32px;height:32px;background:#1a1917;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+  header h1{font-size:15px;font-weight:600;letter-spacing:-.02em}
+  header p{font-size:11px;color:var(--text2);margin-top:1px}
+  .badge{margin-left:auto;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;flex-shrink:0}
+  .main{padding:1.1rem 1.5rem 3rem;max-width:1600px;margin:0 auto}
+  .ctrl-row{display:flex;flex-wrap:wrap;gap:1.1rem;margin-bottom:.9rem;align-items:flex-start}
+  .ctrl-grp{display:flex;flex-direction:column;gap:4px}
+  .ctrl-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+  .btn-row{display:flex;flex-wrap:wrap;gap:4px}
+  .fbtn{font-family:'DM Sans',sans-serif;font-size:12px;padding:3px 10px;border:1px solid var(--border);border-radius:20px;background:var(--surface);color:var(--text2);cursor:pointer;transition:all .12s;font-weight:500}
+  .fbtn:hover{border-color:rgba(0,0,0,.22);color:var(--text)}
+  .fbtn.on{background:var(--text);color:#fff;border-color:var(--text)}
+  .leg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:.9rem;padding:.55rem .85rem;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);align-items:center}
+  .leg-sec{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .leg-div{width:1px;height:16px;background:var(--border);margin:0 4px;flex-shrink:0}
+  .leg-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+  .li{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+  .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+  .gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;box-shadow:var(--shadow)}
+  table.g{border-collapse:collapse;font-size:11px;white-space:nowrap}
+  .g th{font-family:'DM Mono',monospace;font-weight:500;font-size:10px;color:var(--text3);text-align:center;padding:4px 1px;border-bottom:1px solid var(--border2);position:sticky;top:0;background:var(--surface);z-index:20}
+  .g th.lh{text-align:left;padding:4px 10px 4px 8px;min-width:170px;position:sticky;left:0;z-index:30;border-right:1px solid var(--border2)}
+  .g td{padding:1px;height:26px;border-bottom:1px solid var(--border2)}
+  .g td.lt{position:sticky;left:0;background:var(--surface);z-index:10;padding:2px 8px;border-right:1px solid var(--border2);min-width:170px}
+  .pn{font-size:11px;font-weight:600;color:var(--text)}
+  .tt{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:4px}
+  .ps{font-size:10px;color:var(--text3);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:162px}
+  .dc{width:16px;min-width:16px;max-width:16px;padding:3px 1px;vertical-align:middle}
+  .we{background:var(--surface2)}.tc{background:rgba(55,138,221,.12)}.ws{border-left:1px solid var(--border2)!important}.ht{color:#378ADD!important;font-weight:600!important}
+  .bs{background:var(--surface2);padding:4px 8px;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border);position:sticky;left:0}
+  #tt{position:fixed;background:#1a1917;color:#fff;border-radius:7px;padding:7px 12px;font-size:12px;pointer-events:none;z-index:9999;display:none;line-height:1.9;max-width:230px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  #tt b{font-weight:600;font-size:13px}
+  .tbadge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:600;margin-top:2px}
+  .stats{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:.9rem}
+  .sc{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;min-width:95px}
+  .sn{font-size:20px;font-weight:600;letter-spacing:-.02em}
+  .sl{font-size:10px;color:var(--text3);margin-top:1px}
+  .empty{padding:2.5rem;text-align:center;color:var(--text3);font-size:13px}
+  /* bar */
+  .bw{width:14px;height:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer}
+  .bm{width:14px;height:15px;border-radius:3px;transition:opacity .1s,transform .1s;display:flex;align-items:center;justify-content:center}
+  .bw:hover .bm{opacity:.8;transform:scaleY(1.1)}
+  .pb{width:14px;height:18px;border-radius:3px;background:repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);border:1px dashed rgba(0,0,0,.12)}
+  /* indicators inside bar */
+  .i-prod{width:7px;height:3px;border-radius:1px;background:#fff;opacity:.9}
+  .i-camp{width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid #fff;opacity:.95}
+  .i-spec{width:6px;height:6px;border-radius:50%;background:#fff;opacity:.95}
+  .i-apres{width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:7px solid #fff;opacity:.95}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">📋</div>
+  <div><h1>Painel de Projetos PBL</h1><p>Ensino Fundamental II — Cronograma de Aulas</p></div>
+  <div class="badge" id="tbadge">—</div>
+</header>
+
+<div class="main">
+  <div class="ctrl-row">
+    <div class="ctrl-grp"><div class="ctrl-lbl">Turma</div><div class="btn-row" id="tf"></div></div>
+    <div class="ctrl-grp"><div class="ctrl-lbl">Bloco</div><div class="btn-row" id="bf"></div></div>
+    <div class="ctrl-grp"><div class="ctrl-lbl">Disciplina</div><div class="btn-row" id="df"></div></div>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div class="leg">
+    <span class="leg-lbl">Disciplina</span>
+    <div class="leg-sec" id="dleg"></div>
+    <div class="leg-div"></div>
+    <span class="leg-lbl">Tipo de aula</span>
+    <div class="leg-sec">
+      <div class="li"><span class="ld" style="background:#888;display:flex;align-items:center;justify-content:center"><span class="i-prod"></span></span>Produção</div>
+      <div class="li"><span class="ld" style="background:#888;display:flex;align-items:center;justify-content:center"><span class="i-camp"></span></span>Pesquisa de campo</div>
+      <div class="li"><span class="ld" style="background:#888;display:flex;align-items:center;justify-content:center"><span class="i-spec"></span></span>Visita do especialista</div>
+      <div class="li"><span class="ld" style="background:#888;display:flex;align-items:center;justify-content:center"><span class="i-apres"></span></span>Apresentação do Produto</div>
+      <div class="li"><span class="ld" style="background:#888"></span>Aula de Projeto</div>
+      <div class="li"><span class="ld" style="background:repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,.13) 2px,rgba(0,0,0,.13) 4px);border:1px dashed rgba(0,0,0,.18)"></span>Pendente</div>
+    </div>
+  </div>
+  <div class="gantt-wrap"><table class="g" id="gantt"></table></div>
+</div>
+<div id="tt"></div>
+
+<script>
+const DC={'Geometria':'#2563EB','Ciências':'#059669','Arte':'#DB2777','Português':'#D97706','Matemática':'#7C3AED','Geografia':'#16A34A','História':'#EA580C'};
+const TC={'Produção':'#7C3AED','Pesquisa de campo':'#059669','Visita do especialista':'#D97706','Apresentação do Produto':'#DB2777','Aula de Projeto':'#6b6a65'};
+
+const DATE_TYPES={"6_Ciências_1":{"25/02":"Aula de Projeto","26/02":"Aula de Projeto","04/03":"Aula de Projeto","05/03":"Pesquisa de campo","11/03":"Aula de Projeto","12/03":"Produção","18/03":"Produção","19/03":"Produção"},"6_Matemática_1":{"27/02":"Pesquisa de campo","06/03":"Pesquisa de campo","13/03":"Aula de Projeto","20/03":"Aula de Projeto","27/03":"Produção","10/04":"Produção","17/04":"Produção"},"7_Arte_1":{"26/02":"Produção","06/03":"Produção","13/03":"Produção","20/03":"Produção","27/03":"Apresentação do Produto"},"7_Matemática_1":{"26/02":"Pesquisa de campo","05/03":"Pesquisa de campo","12/03":"Pesquisa de campo","19/03":"Pesquisa de campo","26/03":"Produção","02/04":"Produção","09/04":"Produção","16/04":"Apresentação do Produto"},"8_Ciências_1":{"02/03":"Produção","03/03":"Produção","09/03":"Produção","10/03":"Produção","16/03":"Produção","17/03":"Produção","23/03":"Produção","24/03":"Produção","30/03":"Aula de Projeto","31/03":"Aula de Projeto"},"8_Matemática_1":{"02/03":"Pesquisa de campo","09/03":"Aula de Projeto","16/03":"Aula de Projeto","23/03":"Aula de Projeto","30/03":"Produção","06/04":"Produção","13/04":"Produção","27/04":"Produção","04/05":"Produção"},"9_Matemática_1":{"05/03":"Produção","09/03":"Produção","10/03":"Produção","13/03":"Produção","16/03":"Produção","17/03":"Produção","19/03":"Produção","23/03":"Aula de Projeto","24/03":"Aula de Projeto","26/03":"Produção","30/03":"Produção"},"9_Português_1":{"04/03":"Produção","05/03":"Produção","06/03":"Produção","11/03":"Produção","12/03":"Produção","13/03":"Aula de Projeto","18/03":"Aula de Projeto","19/03":"Aula de Projeto","20/03":"Produção","25/03":"Apresentação do Produto"},"6_Arte_2":{"13/03":"Aula de Projeto","20/03":"Aula de Projeto","27/03":"Aula de Projeto","10/04":"Produção","17/04":"Produção","08/05":"Produção","15/05":"Apresentação do Produto"},"6_Geografia_2":{"26/03":"Apresentação do Produto","27/03":"Apresentação do Produto","02/04":"Produção","09/04":"Produção","10/04":"Produção","16/04":"Produção","17/04":"Produção","30/04":"Apresentação do Produto"},"7_Geografia_2":{"23/03":"Apresentação do Produto","24/03":"Produção","30/03":"Produção","31/03":"Produção","06/04":"Produção","07/04":"Produção","13/04":"Produção","14/04":"Produção","27/04":"Produção","28/04":"Apresentação do Produto"},"7_História_2":{"23/03":"Aula de Projeto","26/03":"Aula de Projeto","02/04":"Aula de Projeto","06/04":"Produção","09/04":"Produção","13/04":"Produção","16/04":"Produção","27/04":"Produção","30/04":"Produção","04/05":"Produção","07/05":"Apresentação do Produto"},"7_Português_2":{"16/03":"Produção","23/03":"Visita do especialista","30/03":"Visita do especialista","06/04":"Produção","13/04":"Produção"},"8_Geografia_2":{"18/03":"Produção","19/03":"Produção","25/03":"Produção","26/03":"Produção","01/04":"Produção","02/04":"Produção","08/04":"Produção","09/04":"Produção","15/04":"Apresentação do Produto"},"8_História_2":{"17/03":"Aula de Projeto","18/03":"Apresentação do Produto","24/03":"Apresentação do Produto","25/03":"Produção","30/03":"Aula de Projeto","31/03":"Produção","07/04":"Produção","08/04":"Produção","15/04":"Apresentação do Produto","28/04":"Pesquisa de campo"},"8_Português_2":{"16/03":"Aula de Projeto","17/03":"Produção","23/03":"Aula de Projeto","24/03":"Aula de Projeto","30/03":"Aula de Projeto","31/03":"Produção","06/04":"Produção"},"9_Geografia_2":{"18/03":"Aula de Projeto","19/03":"Aula de Projeto","24/03":"Aula de Projeto","25/03":"Apresentação do Produto","31/03":"Apresentação do Produto","01/04":"Apresentação do Produto","07/04":"Pesquisa de campo","08/04":"Pesquisa de campo","14/04":"Pesquisa de campo"},"9_História_2":{"16/03":"Aula de Projeto","17/03":"Produção","23/03":"Produção","24/03":"Produção","30/03":"Aula de Projeto","31/03":"Produção","06/04":"Produção","07/04":"Produção","13/04":"Apresentação do Produto"},"6_História_3":{"13/04":"Aula de Projeto","16/04":"Aula de Projeto","27/04":"Produção","04/05":"Produção","07/05":"Produção","11/05":"Aula de Projeto"},"6_Português_3":{"06/04":"Produção","07/04":"Aula de Projeto","13/04":"Apresentação do Produto","14/04":"Produção","27/04":"Produção","28/04":"Produção","04/05":"Produção"},"8_Arte_3":{"26/03":"Aula de Projeto","02/04":"Produção","09/04":"Produção","16/04":"Produção","30/04":"Produção","07/05":"Apresentação do Produto"},"9_Arte_3":{"24/03":"Aula de Projeto","31/03":"Aula de Projeto","07/04":"Produção","14/04":"Produção","28/04":"Produção","05/05":"Produção","12/05":"Apresentação do Produto"},"9_Ciências_3":{"01/04":"Aula de Projeto","06/04":"Aula de Projeto","08/04":"Aula de Projeto","13/04":"Produção","15/04":"Produção","27/04":"Apresentação do Produto","29/04":"Produção","04/05":"Apresentação do Produto"}};
+
+const PNAMES={"6_Ciências_1":"A Vida Funciona em Rede","6_Matemática_1":"Geometria nos Bairros de Cabo Frio","7_Arte_1":"Dança como Linguagem","7_Matemática_1":"Praça Inteligente","8_Ciências_1":"Por que emagrecer nem sempre…","8_Matemática_1":"Desafio das Pontes","9_Matemática_1":"À vista, parcelado ou negociado?","9_Português_1":"Minha Escola em Ling. de Anúncio","6_Arte_2":"Cinema Maker","6_Geografia_2":"Mapeando Nossa Cidade","7_Geografia_2":"Brasil em Transformação","7_História_2":"Podcast: Ideias que abalaram o mundo","7_Português_2":"Ciência Para Quem Não é Cientista","8_Geografia_2":"Modelos Econômicos no Mundo Real","8_História_2":"Tribunal Histórico Rev. Industrial","8_Português_2":"Num Futuro Tão Distante","9_Geografia_2":"O Mundo em Risco","9_História_2":"Vozes da Guerra (1914–1919)","6_História_3":"Mapa Investigativo — Primeiros Povos","6_Português_3":"Quem conta a nossa história?","8_Arte_3":"Cena Futurista em Stop Motion","9_Arte_3":"Um novo palco","9_Ciências_3":"Sistema Inteligente de Iluminação"};
+
+const PROJ=[
+  {b:'Bloco 1',t:'600',d:'Ciências',  ds:['25/02','26/02','04/03','05/03','11/03','12/03','18/03','19/03']},
+  {b:'Bloco 1',t:'600',d:'Matemática',ds:['27/02','06/03','13/03','20/03','27/03','10/04','17/04']},
+  {b:'Bloco 1',t:'601',d:'Ciências',  ds:['25/02','27/02','04/03','05/03','06/03','11/03','13/03','18/03']},
+  {b:'Bloco 1',t:'601',d:'Matemática',ds:['27/02','06/03','13/03','20/03','27/03','10/04','17/04']},
+  {b:'Bloco 1',t:'700',d:'Arte',      ds:['26/02','06/03','13/03','20/03','27/03']},
+  {b:'Bloco 1',t:'700',d:'Matemática',ds:['26/02','05/03','12/03','19/03','26/03','02/04','09/04','16/04']},
+  {b:'Bloco 1',t:'701',d:'Arte',      ds:['26/02','06/03','13/03','20/03','27/03']},
+  {b:'Bloco 1',t:'701',d:'Matemática',ds:['26/02','05/03','12/03','19/03','26/03','02/04','09/04','16/04']},
+  {b:'Bloco 1',t:'800',d:'Ciências',  ds:['02/03','03/03','09/03','10/03','16/03','17/03','23/03','24/03','30/03','31/03']},
+  {b:'Bloco 1',t:'800',d:'Matemática',ds:['02/03','09/03','16/03','23/03','30/03','06/04','13/04','27/04','04/05']},
+  {b:'Bloco 1',t:'801',d:'Ciências',  ds:['04/03','06/03','11/03','13/03','18/03','20/03','25/03','27/03','01/04','08/04']},
+  {b:'Bloco 1',t:'801',d:'Matemática',ds:['05/03','12/03','19/03','26/03','02/04','09/04','16/04','30/04','07/05']},
+  {b:'Bloco 1',t:'900',d:'Matemática',ds:['05/03','09/03','10/03','13/03','16/03','17/03','19/03','23/03','24/03','26/03','30/03']},
+  {b:'Bloco 1',t:'900',d:'Português', ds:['04/03','05/03','06/03','11/03','12/03','13/03','18/03','19/03','20/03','25/03']},
+  {b:'Bloco 1',t:'901',d:'Matemática',ds:['02/03','03/03','09/03','10/03','16/03','17/03','23/03','24/03','30/03']},
+  {b:'Bloco 1',t:'901',d:'Português', ds:['04/03','05/03','06/03','11/03','12/03','13/03','18/03','19/03','20/03','25/03']},
+  {b:'Bloco 2',t:'600',d:'Arte',      ds:['13/03','20/03','27/03','10/04','17/04','08/05','15/05']},
+  {b:'Bloco 2',t:'600',d:'Geografia', ds:['26/03','27/03','02/04','09/04','10/04','16/04','17/04','30/04']},
+  {b:'Bloco 2',t:'601',d:'Arte',      ds:['12/03','19/03','26/03','02/04','09/04','16/04','30/04']},
+  {b:'Bloco 2',t:'601',d:'Geografia', ds:['23/03','24/03','30/03','31/03','06/04','07/04','13/04','14/04','27/04']},
+  {b:'Bloco 2',t:'700',d:'Geografia', ds:['23/03','24/03','30/03','31/03','06/04','07/04','13/04','14/04','27/04','28/04']},
+  {b:'Bloco 2',t:'700',d:'História',  ds:['23/03','26/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04','04/05','07/05']},
+  {b:'Bloco 2',t:'700',d:'Português', ds:['16/03','23/03','30/03','06/04','13/04']},
+  {b:'Bloco 2',t:'701',d:'Geografia', ds:['23/03','26/03','30/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04']},
+  {b:'Bloco 2',t:'701',d:'História',  ds:['23/03','26/03','30/03','02/04','06/04','09/04','13/04','16/04','27/04','30/04','04/05']},
+  {b:'Bloco 2',t:'701',d:'Português', ds:['18/03','25/03','01/04','08/04','15/04']},
+  {b:'Bloco 2',t:'800',d:'Geografia', ds:['18/03','19/03','25/03','26/03','01/04','02/04','08/04','09/04','15/04']},
+  {b:'Bloco 2',t:'800',d:'História',  ds:['17/03','18/03','24/03','25/03','30/03','31/03','07/04','08/04','15/04','28/04']},
+  {b:'Bloco 2',t:'800',d:'Português', ds:['16/03','17/03','23/03','24/03','30/03','31/03','06/04']},
+  {b:'Bloco 2',t:'801',d:'Geografia', ds:['17/03','18/03','24/03','25/03','31/03','01/04','06/04','07/04','14/04']},
+  {b:'Bloco 2',t:'801',d:'História',  ds:['17/03','18/03','24/03','25/03','30/03','31/03','07/04','08/04','15/04','28/04']},
+  {b:'Bloco 2',t:'801',d:'Português', ds:['13/03','16/03','20/03','23/03','27/03','30/03','06/04']},
+  {b:'Bloco 2',t:'900',d:'Geografia', ds:['18/03','19/03','24/03','25/03','31/03','01/04','07/04','08/04','14/04']},
+  {b:'Bloco 2',t:'900',d:'História',  ds:['16/03','17/03','23/03','24/03','30/03','31/03','06/04','07/04','13/04']},
+  {b:'Bloco 2',t:'901',d:'Geografia', ds:['17/03','19/03','24/03','26/03','31/03','02/04','07/04','09/04','14/04']},
+  {b:'Bloco 2',t:'901',d:'História',  ds:['17/03','18/03','24/03','25/03','31/03','01/04','07/04','08/04','14/04']},
+  {b:'Bloco 3',t:'600',d:'História',  ds:['13/04','16/04','27/04','04/05','07/05','11/05']},
+  {b:'Bloco 3',t:'600',d:'Português', ds:['06/04','07/04','13/04','14/04','27/04','28/04','04/05']},
+  {b:'Bloco 3',t:'601',d:'História',  ds:['06/04','10/04','13/04','16/04','27/04','11/05','14/05']},
+  {b:'Bloco 3',t:'601',d:'Português', ds:['06/04','07/04','13/04','14/04','27/04','28/04','04/05']},
+  {b:'Bloco 3',t:'700',d:'(pendente)',ds:[],p:true},
+  {b:'Bloco 3',t:'701',d:'(pendente)',ds:[],p:true},
+  {b:'Bloco 3',t:'800',d:'Arte',      ds:['26/03','02/04','09/04','16/04','30/04','07/05']},
+  {b:'Bloco 3',t:'801',d:'Arte',      ds:['26/03','02/04','09/04','16/04','30/04','07/05']},
+  {b:'Bloco 3',t:'900',d:'Arte',      ds:['24/03','31/03','07/04','14/04','28/04','05/05','12/05']},
+  {b:'Bloco 3',t:'900',d:'Ciências',  ds:['01/04','06/04','08/04','13/04','15/04','27/04','29/04','04/05']},
+  {b:'Bloco 3',t:'901',d:'Arte',      ds:['26/03','02/04','09/04','16/04','30/04','07/05','14/05']},
+  {b:'Bloco 3',t:'901',d:'Ciências',  ds:['01/04','06/04','08/04','13/04','15/04','27/04','29/04','04/05']},
+];
+
+function ta(t){const n=parseInt(t);return n<700?'6':n<800?'7':n<900?'8':'9'}
+function pkey(p){const bn=parseInt(p.b.split(' ')[1]);const d=p.d==='Geometria'?'Matemática':p.d;return `${ta(p.t)}_${d}_${bn}`}
+function lt(p,ds){if(p.p)return null;const m=DATE_TYPES[pkey(p)];return m?m[ds]||'Aula de Projeto':'Aula de Projeto'}
+function pn(p){return PNAMES[pkey(p)]||''}
+function pd(s){const[d,m]=s.split('/').map(Number);return new Date(2026,m-1,d)}
+function fd(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')}
+function ad(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
+
+const today=new Date(2026,2,30);
+document.getElementById('tbadge').textContent='Hoje: '+fd(today)+'/2026';
+const S=new Date(2026,1,24),E=new Date(2026,4,18),days=[];
+for(let d=new Date(S);d<=E;d=ad(d,1))days.push(new Date(d));
+
+const allT=[...new Set(PROJ.map(p=>p.t))].sort();
+const allB=['Bloco 1','Bloco 2','Bloco 3'];
+const allD=Object.keys(DC);
+let aT=new Set(allT),aB=new Set(allB),aD=new Set(allD);
+
+document.getElementById('dleg').innerHTML=Object.entries(DC).map(([n,c])=>`<div class="li"><span class="ld" style="background:${c}"></span>${n}</div>`).join('');
+
+function mkBtn(id,items,active,onChange){
+  const el=document.getElementById(id);
+  items.forEach(v=>{
+    const b=document.createElement('button');
+    b.className='fbtn on';b.textContent=v;
+    b.onclick=()=>{b.classList.toggle('on');active[b.classList.contains('on')?'add':'delete'](v);render()};
+    el.appendChild(b);
+  });
+}
+mkBtn('tf',allT,aT);mkBtn('bf',allB,aB);
+allD.forEach(d=>{
+  const b=document.createElement('button');
+  b.className='fbtn on';b.textContent=d;b.style.borderLeft=`3px solid ${DC[d]}`;
+  b.onclick=()=>{b.classList.toggle('on');aD[b.classList.contains('on')?'add':'delete'](d);render()};
+  document.getElementById('df').appendChild(b);
+});
+
+const tip=document.getElementById('tt');
+document.addEventListener('mousemove',e=>{if(tip.style.display==='block'){tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-12)+'px'}});
+
+function ind(type){
+  if(!type||type==='Aula de Projeto')return '';
+  if(type==='Produção')return '<span class="i-prod"></span>';
+  if(type==='Pesquisa de campo')return '<span class="i-camp"></span>';
+  if(type==='Visita do especialista')return '<span class="i-spec"></span>';
+  if(type==='Apresentação do Produto')return '<span class="i-apres"></span>';
+  return '';
+}
+
+function render(){
+  const filt=PROJ.filter(p=>aT.has(p.t)&&aB.has(p.b)&&(p.p||aD.has(p.d)||(p.d==='Geometria'&&aD.has('Matemática'))));
+  const total=filt.filter(p=>!p.p).length,pend=filt.filter(p=>p.p).length;
+  const trms=new Set(filt.map(p=>p.t)).size;
+  const taulas=filt.filter(p=>!p.p).reduce((a,p)=>a+p.ds.length,0);
+  const tc={};filt.filter(p=>!p.p).forEach(p=>p.ds.forEach(d=>{const t=lt(p,d)||'Aula de Projeto';tc[t]=(tc[t]||0)+1}));
+
+  document.getElementById('stats').innerHTML=`
+    <div class="sc"><div class="sn">${total}</div><div class="sl">Projetos ativos</div></div>
+    <div class="sc"><div class="sn">${trms}</div><div class="sl">Turmas</div></div>
+    <div class="sc"><div class="sn">${taulas}</div><div class="sl">Aulas agendadas</div></div>
+    ${tc['Produção']?`<div class="sc"><div class="sn" style="color:#7C3AED">${tc['Produção']}</div><div class="sl">Produção</div></div>`:''}
+    ${tc['Apresentação do Produto']?`<div class="sc"><div class="sn" style="color:#DB2777">${tc['Apresentação do Produto']}</div><div class="sl">Apresentações</div></div>`:''}
+    ${tc['Pesquisa de campo']?`<div class="sc"><div class="sn" style="color:#059669">${tc['Pesquisa de campo']}</div><div class="sl">Pesq. de campo</div></div>`:''}
+    ${tc['Visita do especialista']?`<div class="sc"><div class="sn" style="color:#D97706">${tc['Visita do especialista']}</div><div class="sl">Visita especialista</div></div>`:''}
+    ${pend?`<div class="sc"><div class="sn" style="color:#9e9d98">${pend}</div><div class="sl">Pendentes</div></div>`:''}`;
+
+  const tbl=document.getElementById('gantt');
+  if(!filt.length){tbl.innerHTML='<tr><td class="empty" colspan="200">Nenhum projeto selecionado.</td></tr>';return}
+
+  let h='<thead><tr><th class="lh">Projeto</th>';
+  let wi=0;
+  while(wi<days.length){
+    let sp=1;while(wi+sp<days.length&&days[wi+sp].getDay()!==1)sp++;
+    const cl=days[wi].getTime()===today.getTime()?' ht':'';
+    h+=`<th colspan="${sp}" class="ws${cl}">${fd(days[wi])}</th>`;wi+=sp;
+  }
+  h+='</tr></thead><tbody>';
+
+  ['Bloco 1','Bloco 2','Bloco 3'].forEach(bloco=>{
+    if(!aB.has(bloco))return;
+    const rows=filt.filter(p=>p.b===bloco);
+    if(!rows.length)return;
+    h+=`<tr><td class="bs" colspan="${days.length+1}">${bloco}</td></tr>`;
+    rows.forEach(proj=>{
+      const pd2=new Set(proj.ds);const col=DC[proj.d]||'#aaa';const pname=pn(proj);
+      h+=`<tr><td class="lt"><span class="pn">${proj.d}<span class="tt">${proj.t}</span></span>${pname?`<span class="ps" title="${pname}">${pname}</span>`:''}</td>`;
+      days.forEach(d=>{
+        const dow=d.getDay(),isT=d.getTime()===today.getTime(),isMon=dow===1,isW=dow===0||dow===6;
+        let cl='dc';if(isW)cl+=' we';if(isT)cl+=' tc';if(isMon)cl+=' ws';
+        const ds=fd(d);let inner='';
+        if(proj.p&&!isW){inner='<div class="pb"></div>';}
+        else if(pd2.has(ds)){
+          const ltype=lt(proj,ds)||'Aula de Projeto';
+          const tcol=TC[ltype]||'#6b6a65';
+          const ic=ind(ltype);
+          inner=`<div class="bw" data-d="${proj.d}|${proj.t}|${bloco}|${ds}|${ltype}|${col}|${tcol}"><div class="bm" style="background:${col}">${ic}</div></div>`;
+        }
+        h+=`<td class="${cl}">${inner}</td>`;
+      });
+      h+='</tr>';
+    });
+  });
+  h+='</tbody>';tbl.innerHTML=h;
+
+  tbl.querySelectorAll('[data-d]').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{
+      const[disc,turma,bloco,date,ltype,col,tcol]=el.dataset.d.split('|');
+      const bn=parseInt(bloco.split(' ')[1]);const an=ta(turma);
+      const disc2=disc==='Geometria'?'Matemática':disc;
+      const nome=PNAMES[`${an}_${disc2}_${bn}`]||'';
+      tip.innerHTML=`<b>${disc}</b> <span style="opacity:.5">·</span> Turma ${turma}<br><span class="tbadge" style="background:${tcol}22;color:${tcol}">${ltype}</span>${nome?`<br><span style="opacity:.55;font-size:10px">${nome}</span>`:''}<br><span style="opacity:.4;font-size:10px">${bloco} · ${date}/2026</span>`;
+      tip.style.display='block';
+    });
+    el.addEventListener('mouseleave',()=>tip.style.display='none');
+  });
+}
+render();
+</script>
+</body>
+</html>
